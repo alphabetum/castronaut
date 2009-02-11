@@ -61,7 +61,8 @@ Sinatra::Application.set(
   :run => true,
   :raise_errors => true,
   :logging => true,
-  :port => Castronaut.config.respond_to?(:server_port) ? Castronaut.config.server_port : Sinatra::Application.default_options[:port]
+  :port => Castronaut.config.respond_to?(:server_port) ? Castronaut.config.server_port : "4567" ,
+  :server => Castronaut.config.respond_to?(:server) ? Castronaut.config.server :  "thin"
 )
 
 Castronaut.logger.info("Sinatra - Loading app/config.rb")

@@ -48,6 +48,11 @@ module Castronaut
         Castronaut::TicketResult.new(service_ticket, nil, "success")
       end
 
+      def self.expiry_time
+        config = ::Castronaut::Configuration.load
+        config.service_expiry_time
+      end
+
       def matches_service?(other_service)
         service == other_service
       end
@@ -79,7 +84,8 @@ module Castronaut
       end
 
       def expired?
-        true
+        return false if self.class.expiry_time == 0
+        Time.now - created_at > self.class.expiry_time 
       end
       
       def proxies

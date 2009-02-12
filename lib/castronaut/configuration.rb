@@ -72,14 +72,14 @@ module Castronaut
       }
       mod = Module.new do
         define_method(:login_expiry_time) { 
-          expiry_proc.call(:login_ticket_expiry) 
+          expiry_proc.call("login_ticket_expiry") 
         }
-        define_method(:session_expiry_time) {
-          expiry_proc.call(:session_ticket_expiry)
+        define_method(:service_expiry_time) {
+          expiry_proc.call("service_ticket_expiry")
         }
       end
       self.extend mod
-      return self.login_expiry_time, self.session_expiry_time
+      return self.login_expiry_time, self.service_expiry_time
     end
 
     def debug_initialize

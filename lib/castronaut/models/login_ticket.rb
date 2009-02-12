@@ -34,13 +34,12 @@ module Castronaut
       end
 
       def self.expiry_time
-        config = ::Castronaut::Configuration.load
-        config.login_expiry_time
+        #::Castronaut::Configuration.load.login_expiry_time
+        ::Castronaut.config.login_expiry_time
       end
 
       def expired?
-        config = ::Castronaut::Configuration.load
-        return false if config.login_expiry_time == 0
+        return false if self.class.expiry_time == 0
         Time.now - created_at > self.class.expiry_time 
       end
  

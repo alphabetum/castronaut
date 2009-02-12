@@ -49,8 +49,8 @@ module Castronaut
       end
 
       def self.expiry_time
-        config = ::Castronaut::Configuration.load
-        config.service_expiry_time
+        #::Castronaut::Configuration.load.service_expiry_time
+        ::Castronaut.config.service_expiry_time
       end
 
       def matches_service?(other_service)

@@ -23,6 +23,7 @@ module Castronaut
       config.logger = config.setup_logger
       config.debug_initialize if config.logger.debug?
       config.connect_activerecord 
+      config.setup_expiry_times
       config
     end
 
@@ -52,6 +53,33 @@ module Castronaut
       log = Hodel3000CompliantLogger.new("#{log_directory}/castronaut.log", "daily")
       log.level = eval(log_level)
       log
+    end
+
+    def setup_expiry_times
+      expiry_proc = lambda { |key|
+        return 0 if config_hash[key].nil? || config_hash[key] == "0"
+        len_and_unit = config_hash[key].scan(/(\d+)(\w*)/).pop
+        raise ArgumentError, "invalid ticket expiry format; either leave blank or use format length[unit]; i.e., 60m, 36h" if len_and_unit.nil? || len_and_unit.empty?
+
+        case len_and_unit.last
+        when /^m/i: return len_and_unit.first.to_i
+        when /^h/i: return len_and_unit.first.to_i * 60
+        when /^d/i: return len_and_unit.first.to_i * 24 * 60
+        when /^(\s*)$/: return len_and_unit.first.to_i 
+        else
+          raise ArgumentError, "invalid expiry length"
+        end
+      }
+      mod = Module.new do
+        define_method(:login_expiry_time) { 
+          expiry_proc.call(:login_ticket_expiry) 
+        }
+        define_method(:session_expiry_time) {
+          expiry_proc.call(:session_ticket_expiry)
+        }
+      end
+      self.extend mod
+      return self.login_expiry_time, self.session_expiry_time
     end
 
     def debug_initialize

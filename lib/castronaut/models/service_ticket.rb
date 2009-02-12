@@ -79,7 +79,7 @@ module Castronaut
       end
 
       def expired?
-        # Time.now - service_ticket.created_on > CASServer::Conf.service_ticket_expiry
+        true
       end
       
       def proxies

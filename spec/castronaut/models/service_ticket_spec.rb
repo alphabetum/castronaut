@@ -163,6 +163,8 @@ describe Castronaut::Models::ServiceTicket do
           it "consumes the service ticket" do
             service_ticket = stub_model(ServiceTicket, :consumed? => false)
             service_ticket.should_receive(:consume!)
+            mock_config = mock('config', :config_hash => {})
+            Castronaut::Configuration.stub!(:load).and_return mock_config
 
             Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(service_ticket)
             Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket')
@@ -187,6 +189,8 @@ describe Castronaut::Models::ServiceTicket do
             end
 
             it "is marked as invalid" do
+              mock_config = mock('config', :config_hash => {})
+              Castronaut::Configuration.stub!(:load).and_return mock_config
               service_ticket = stub_model(ServiceTicket, :consumed? => false, :consume! => nil)
               service_ticket.stub!(:===).and_return(true)
               Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(service_ticket)
@@ -194,6 +198,16 @@ describe Castronaut::Models::ServiceTicket do
               Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket', false).should be_invalid
             end
 
+          end
+
+          describe "after a ticket expires" do
+            it "times out an expired ticket" do
+              mock_config = mock('config', :session_expiry_time => 60)
+              Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(stub_model(ServiceTicket, :consumed? => false, :consumed_at= => nil, :save! => nil, :created_at => Time.now - 1000))
+              Castronaut::Configuration.stub!(:load).and_return mock_config
+              Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket 'ticket' has expired."
+
+            end
           end
 
           describe "when it is already expired it returns a ticket result" do

@@ -33,8 +33,15 @@ module Castronaut
         Castronaut::TicketResult.new(login_ticket, nil, "success")
       end
 
+      def self.expiry_time
+        config = ::Castronaut::Configuration.load
+        config.login_expiry_time
+      end
+
       def expired?
-        #Time.now - lt.created_on < CASServer::Conf.login_ticket_expiry
+        config = ::Castronaut::Configuration.load
+        return false if config.login_expiry_time == 0
+        Time.now - created_at > self.class.expiry_time 
       end
  
       def ticket_prefix

@@ -83,6 +83,7 @@ describe Castronaut::Models::LoginTicket do
         
         it "returns a ticket result with the ExpiredMessage" do
           login_ticket = stub_model(LoginTicket, :expired? => true, :consumed? => false)
+          Castronaut::Configuration.stub!(:load).and_return(mock('config', :config_hash => {}))
           LoginTicket.stub!(:find_by_ticket).and_return(login_ticket)
           
           Castronaut::TicketResult.should_receive(:new).with(login_ticket, LoginTicket::ExpiredMessage)
@@ -102,6 +103,24 @@ describe Castronaut::Models::LoginTicket do
       
     end
     
+  end
+
+  describe "handling expiry time settings" do
+    it "treats an expiry time of 0 as no expiry" do
+      Castronaut::Configuration.stub!(:load).and_return(mock('config', :login_expiry_time => 0))
+      LoginTicket.expiry_time.should == 0
+      login_ticket = LoginTicket.new
+      login_ticket.created_at = Time.now - 5000
+      login_ticket.expired?.should == false
+    end
+
+    it "expires tickets" do
+      Castronaut::Configuration.stub!(:load).and_return(mock('config', :login_expiry_time => 60))
+      login_ticket = LoginTicket.new
+      login_ticket.created_at = Time.now - 61
+      login_ticket.expired?.should == true
+    end
+
   end
 
 end

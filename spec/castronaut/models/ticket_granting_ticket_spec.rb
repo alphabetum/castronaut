@@ -12,6 +12,11 @@ describe Castronaut::Models::TicketGrantingTicket do
     TicketGrantingTicket.new.ticket_prefix.should == 'TGC'
   end
 
+  it "is aware of it's expiry time" do
+    Castronaut.stub!(:config).and_return(mock('config', :tgt_expiry_time => 60)) 
+    TicketGrantingTicket.expiry_time.should == 60
+  end
+
   describe "validating ticket granting ticket" do
 
     describe "when given no ticket" do
@@ -79,8 +84,19 @@ describe Castronaut::Models::TicketGrantingTicket do
       tgt.to_cookie.should == "ticket"
     end
     
-    it "never expires" do
+    it "never expires by default" do
       tgt = TicketGrantingTicket.new
+      tgt.created_at = Time.now - 100000
+      TicketGrantingTicket.stub!(:expiry_time).and_return(0)
+      tgt.expired?.should == false
+    end
+
+    it "expires according to the config setting" do
+      TicketGrantingTicket.stub!(:expiry_time).and_return(60)
+      tgt = TicketGrantingTicket.new
+      tgt.created_at = Time.now - 61
+      tgt.expired?.should == true
+      tgt.created_at = Time.now - 58
       tgt.expired?.should == false
     end
     

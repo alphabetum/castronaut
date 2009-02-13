@@ -23,6 +23,7 @@ describe Castronaut::Configuration do
       config.setup_expiry_times
       config.service_expiry_time.should == 0
       config.login_expiry_time.should == 0
+      config.tgt_expiry_time.should == 0
     end
 
     it "raises an exception w/ non-numeric expiry times" do

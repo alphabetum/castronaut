@@ -77,6 +77,9 @@ module Castronaut
         define_method(:service_expiry_time) {
           expiry_proc.call("service_ticket_expiry")
         }
+        define_method(:tgt_expiry_time) {
+          expiry_proc.call("ticket_granting_ticket_expiry")
+        }
       end
       self.extend mod
       return self.login_expiry_time, self.service_expiry_time

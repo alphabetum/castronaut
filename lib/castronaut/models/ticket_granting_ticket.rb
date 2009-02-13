@@ -30,6 +30,10 @@ module Castronaut
       def self.generate_for(username, client_host)
         create! :username => username, :client_hostname => client_host
       end
+
+      def self.expiry_time
+        Castronaut.config.tgt_expiry_time
+      end
       
       def ticket_prefix
         "TGC"
@@ -42,10 +46,11 @@ module Castronaut
         ticket
       end
 
-      def expired? 
-        false
+      def expired?
+        return false if self.class.expiry_time == 0
+        Time.now - created_at > self.class.expiry_time 
       end
-
+ 
     end
 
   end

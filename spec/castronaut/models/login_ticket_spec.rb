@@ -107,7 +107,7 @@ describe Castronaut::Models::LoginTicket do
 
   describe "handling expiry time settings" do
     it "treats an expiry time of 0 as no expiry" do
-      Castronaut::Configuration.stub!(:load).and_return(mock('config', :login_expiry_time => 0))
+      Castronaut.stub!(:config).and_return(mock('config',  :login_expiry_time => 0))
       LoginTicket.expiry_time.should == 0
       login_ticket = LoginTicket.new
       login_ticket.created_at = Time.now - 5000
@@ -115,7 +115,7 @@ describe Castronaut::Models::LoginTicket do
     end
 
     it "expires tickets" do
-      Castronaut::Configuration.stub!(:load).and_return(mock('config', :login_expiry_time => 60))
+      Castronaut.stub!(:config).and_return(mock('config',  :login_expiry_time => 60))
       login_ticket = LoginTicket.new
       login_ticket.created_at = Time.now - 61
       login_ticket.expired?.should == true

@@ -34,7 +34,6 @@ module Castronaut
       end
 
       def self.expiry_time
-        #::Castronaut::Configuration.load.login_expiry_time
         ::Castronaut.config.login_expiry_time
       end
 

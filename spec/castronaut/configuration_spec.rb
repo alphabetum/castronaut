@@ -9,53 +9,53 @@ describe Castronaut::Configuration do
 
   describe "initialization" do
 
-    xit 'gets session and login expiry from config and formats' do
+    it 'gets session and login expiry from config and formats' do
       config = Castronaut::Configuration.new
-      config.stub!(:config_hash).and_return( :session_ticket_expiry => "1", :login_ticket_expiry => "2")
+      config.stub!(:config_hash).and_return( "service_ticket_expiry" => "1", "login_ticket_expiry" => "2h")
       config.setup_expiry_times
-      config.session_expiry_time.should == 1
-      config.login_expiry_time.should == 2
+      config.service_expiry_time.should == 1
+      config.login_expiry_time.should == 120 
     end
 
-    xit "defaults expiry times to 0 (which is never)" do
+    it "defaults expiry times to 0 (which is never)" do
       config = Castronaut::Configuration.new
       config.stub!(:config_hash).and_return({})
       config.setup_expiry_times
-      config.session_expiry_time.should == 0
+      config.service_expiry_time.should == 0
       config.login_expiry_time.should == 0
     end
 
     it "raises an exception w/ non-numeric expiry times" do
       config = Castronaut::Configuration.new
-      config.stub!(:config_hash).and_return({:session_ticket_expiry => "one fine day"})
+      config.stub!(:config_hash).and_return({"service_ticket_expiry" => "one fine day"})
       lambda {config.setup_expiry_times}.should raise_error(ArgumentError)
     end
 
     it "raises an exception w/ invalid quantifier for expiry times" do
       config = Castronaut::Configuration.new
-      config.stub!(:config_hash).and_return({:session_ticket_expiry => "10nanoseconds"})
+      config.stub!(:config_hash).and_return({"service_ticket_expiry" => "10nanoseconds"})
       lambda {config.setup_expiry_times}.should raise_error(ArgumentError)
     end
 
     it "defaults to minutes for expiry times" do
       config = Castronaut::Configuration.new
-      config.stub!(:config_hash).and_return({:session_ticket_expiry => "1"})
+      config.stub!(:config_hash).and_return({"service_ticket_expiry" => "1"})
       config.setup_expiry_times
-      config.session_expiry_time.should == 1
+      config.service_expiry_time.should == 1
     end
 
     it "accepts hours" do
       config = Castronaut::Configuration.new
-      config.stub!(:config_hash).and_return({:session_ticket_expiry => "1h"})
+      config.stub!(:config_hash).and_return({"service_ticket_expiry" => "1h"})
       config.setup_expiry_times
-      config.session_expiry_time.should == 60
+      config.service_expiry_time.should == 60
     end
 
     it "accepts days" do
       config = Castronaut::Configuration.new
-      config.stub!(:config_hash).and_return({:session_ticket_expiry => "1d"})
+      config.stub!(:config_hash).and_return({"service_ticket_expiry" => "1d"})
       config.setup_expiry_times
-      config.session_expiry_time.should == 60 * 24
+      config.service_expiry_time.should == 60 * 24
     end
 
     it "defaults the config file path to ./castronaut.yml if none is given" do

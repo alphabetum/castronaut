@@ -204,7 +204,7 @@ describe Castronaut::Models::ServiceTicket do
             it "times out an expired ticket" do
               mock_config = mock('config', :service_expiry_time => 1)
               Castronaut::Models::ServiceTicket.stub!(:find_by_ticket).and_return(stub_model(ServiceTicket, :consumed? => false, :consumed_at= => nil, :save! => nil, :created_at => Time.now - 61))
-              Castronaut::Configuration.stub!(:load).and_return mock_config
+              Castronaut.stub!(:config).and_return(mock('config',  :service_expiry_time => 60))
               Castronaut::Models::ServiceTicket.validate_ticket('service', 'ticket').message.should == "Ticket 'ticket' has expired."
 
             end

@@ -63,6 +63,11 @@ describe Castronaut::Models::TicketGrantingTicket do
         TicketGrantingTicket.validate_cookie('abc').message.should be_nil
       end
 
+      it "returns a TicketResult that is invalid" do
+        TicketGrantingTicket.stub!(:find_by_ticket).and_return(nil)
+        TicketGrantingTicket.validate_cookie('abc').should_not be_valid
+      end
+
     end
 
   end

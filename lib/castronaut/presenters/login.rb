@@ -49,6 +49,8 @@ module Castronaut
 
         if ticket_granting_ticket_result.valid?
           messages << "You are currently logged in as #{ticket_granting_ticket_result.username}.  If this is not you, please log in below."
+        else 
+          error_messages(ticket_granting_ticket_result)
         end
 
         if redirection_loop?
@@ -74,6 +76,11 @@ module Castronaut
         @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
                 
         self
+      end
+
+      private
+      def error_messages(tgt_result)
+        messages << tgt_result.message unless (tgt_result.message =~ /expired/).nil?
       end
     
     end

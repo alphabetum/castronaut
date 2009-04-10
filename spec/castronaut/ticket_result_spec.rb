@@ -24,6 +24,12 @@ describe Castronaut::TicketResult do
       ticket_result.stub!(:invalid?).and_return(true)
       ticket_result.should_not be_valid
     end
+ 
+
+    it "treates nil-tgt instances as valid" do
+      ticket_result = Castronaut::TicketResult.new(nil)
+      ticket_result.should be_valid
+    end
   
   end
   

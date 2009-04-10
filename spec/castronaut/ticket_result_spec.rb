@@ -26,7 +26,7 @@ describe Castronaut::TicketResult do
     end
  
 
-    it "treates nil-tgt instances as valid" do
+    xit "USED TO treat nil-tgt instances as valid, PROPOSING it does NOT" do
       ticket_result = Castronaut::TicketResult.new(nil)
       ticket_result.should be_valid
     end

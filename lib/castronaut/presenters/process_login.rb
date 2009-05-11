@@ -103,6 +103,7 @@ module Castronaut
         end
 
         if username.blank? || password.blank?
+          @current_status = 401
           messages << MissingCredentialsMessage
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401
@@ -139,7 +140,9 @@ module Castronaut
           @current_status = 401
         end
 
-        @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
+        if messages.any?
+          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
+        end
 
         self
       end

@@ -44,8 +44,16 @@ describe 'Castronaut Application Controller' do
 
   describe "requesting /login via POST" do
 
-    it 'responds with status 200' do
+    it 'responds with status 401 when unsuccessful' do
       post '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
+      @response.status.should  == 401
+    end
+
+    it 'responds with status 200 when successful' do
+      Castronaut::Models::LoginTicket.stub!(:validate_ticket).and_return(stub('ticket_stub', :invalid? => false, :ticket => 'mytick', :username => 'billybob', :message => "login successful"))
+      Castronaut::Adapters.stub!(:selected_adapter).and_return(stub('success', :authenticate => stub('result', :valid? => true)))
+
+      post '/login', :env => { 'REMOTE_ADDR' => '10.0.0.1'  }, 'username' => 'billybob', 'password' => 'thorton' 
 
       @response.should be_ok
     end

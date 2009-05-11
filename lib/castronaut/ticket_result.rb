@@ -18,7 +18,8 @@ module Castronaut
     end
     
     def invalid?
-      InvalidMessageCategories.any?{ |cat| message_category.to_s.downcase.include?(cat) }
+
+      InvalidMessageCategories.any?{ |cat| message_category.to_s.downcase.include?(cat) } || @ticket.nil?
     end
 
   end

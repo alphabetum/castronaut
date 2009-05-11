@@ -19,9 +19,13 @@ module Castronaut
 
         if ticket_granting_ticket
           Castronaut.logger.debug("#{self} -[#{ticket_cookie}] for [#{ticket_granting_ticket.username}] successfully validated.")
-          return Castronaut::TicketResult.new(ticket_granting_ticket, "Your session has expired. Please log in again.", 'warn') if ticket_granting_ticket.expired?
+          if ticket_granting_ticket.expired?
+            delete ticket_granting_ticket
+            return Castronaut::TicketResult.new(ticket_granting_ticket, "Your session has expired. Please log in again.", 'warn') if ticket_granting_ticket.expired?
+          end
         else
           Castronaut.logger.debug("#{self} - [#{ticket_cookie}] was not found in the database.")
+          return Castronaut::TicketResult.new(ticket_granting_ticket, "Your session is no longer valid.  Please log in again.", 'warn')
         end
 
         Castronaut::TicketResult.new(ticket_granting_ticket)

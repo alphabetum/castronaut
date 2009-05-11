@@ -39,7 +39,11 @@ module Castronaut
           return Castronaut::TicketResult.new(service_ticket, "Ticket '#{ticket}' is a proxy ticket, but only service tickets are allowed here.", "INVALID_TICKET")
         end
 
-        return Castronaut::TicketResult.new(service_ticket, "Ticket '#{ticket}' has expired.", "INVALID_TICKET") if service_ticket.expired?
+        if service_ticket.expired?
+          res =  Castronaut::TicketResult.new(service_ticket, "Ticket '#{ticket}' has expired.", "INVALID_TICKET") 
+          delete service_ticket
+          return res
+        end
 
         mismatched_service_message = "The ticket '#{ticket}' belonging to user '#{service_ticket.username}' is valid, but the requested service '#{service}' does not match the service '#{service_ticket.service}' associated with this ticket."
 

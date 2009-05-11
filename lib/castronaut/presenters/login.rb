@@ -3,7 +3,7 @@ module Castronaut
 
     class Login
       attr_reader :controller, :your_mission
-      attr_accessor :messages
+      attr_accessor :messages, :current_status
 
       delegate :params, :request, :to => :controller
       delegate :cookies, :env, :to => :request
@@ -12,6 +12,7 @@ module Castronaut
         @controller = controller
         @messages = []
         @your_mission = nil
+        @current_status = 200
       end
 
       def service

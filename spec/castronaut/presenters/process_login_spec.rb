@@ -179,6 +179,12 @@ describe Castronaut::Presenters::ProcessLogin do
         Castronaut::Models::LoginTicket.should_receive(:generate_from).with('10.1.1.1').and_return(stub('ticket', :ticket => "STUB"))
         Castronaut::Presenters::ProcessLogin.new(@controller).represent!
       end
+
+      it "sets the HTTP status to 401" do
+        Castronaut::Models::LoginTicket.stub!(:validate_ticket).and_return(stub('login ticket', :invalid? => true, :message => "STUB_MESSAGE"))
+        Castronaut::Presenters::ProcessLogin.new(@controller).represent!.current_status.should == 401
+      end
+      
       
     end
 

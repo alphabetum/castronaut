@@ -12,6 +12,7 @@ end
 post '/login' do
   @presenter = Castronaut::Presenters::ProcessLogin.new(self)
   @presenter.represent!
+  status @presenter.current_status
   @presenter.your_mission.call
 end
 
@@ -24,6 +25,7 @@ end
 get '/serviceValidate' do
   @presenter = Castronaut::Presenters::ServiceValidate.new(self)
   @presenter.represent!
+  status @presenter.current_status
   @presenter.your_mission.call
 end
 

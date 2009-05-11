@@ -5,7 +5,7 @@ module Castronaut
       MissingCredentialsMessage = "Please supply a username and password to login."
 
       attr_reader :controller, :your_mission
-      attr_accessor :messages, :login_ticket
+      attr_accessor :messages, :login_ticket, :current_status
 
       delegate :params, :request, :to => :controller
       delegate :cookies, :env, :to => :request
@@ -14,6 +14,7 @@ module Castronaut
         @controller = controller
         @messages = []
         @your_mission = nil
+        @current_status = 200
       end
 
       def service
@@ -55,6 +56,9 @@ module Castronaut
           if proxy_granting_ticket_url
             @proxy_granting_ticket_result = Castronaut::Models::ProxyGrantingTicket.generate_ticket(proxy_granting_ticket_url, client_host, @service_ticket_result.ticket)
           end
+        else
+          #@current_status = 401 if @service_ticket_result.nil?  || @service_ticket_result.ticket.nil? 
+          @current_status = 401 
         end
 
         @your_mission = lambda { controller.erb :service_validate, :layout => false, :locals => { :presenter => self } }

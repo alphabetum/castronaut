@@ -8,7 +8,7 @@ module Castronaut
       MissingCredentialsMessage = "Please supply a username and password to login."
 
       attr_reader :controller, :your_mission
-      attr_accessor :messages, :login_ticket
+      attr_accessor :messages, :login_ticket, :current_status
 
       delegate :params, :request, :to => :controller
       delegate :cookies, :env, :to => :request
@@ -17,6 +17,7 @@ module Castronaut
         @controller = controller
         @messages = []
         @your_mission = nil
+        @current_status = 200
       end
 
       def service
@@ -96,6 +97,7 @@ module Castronaut
         if login_ticket_validation_result.invalid?
           messages << login_ticket_validation_result.message
           @login_ticket = Castronaut::Models::LoginTicket.generate_from(client_host).ticket
+          @current_status = 401
           @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } } # TODO: STATUS 401
           return self
         end
@@ -134,16 +136,15 @@ module Castronaut
         else
           fire_authentication_failure_notice('username' => username, 'client_host' => client_host, 'service' => service)
           messages << authentication_result.error_message
+          @current_status = 401
         end
 
-        if messages.any?
-          @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
-        end
+        @your_mission = lambda { controller.erb :login, :locals => { :presenter => self } }
 
         self
       end
 
-    end
 
+    end
   end
 end

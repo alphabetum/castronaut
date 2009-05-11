@@ -77,6 +77,15 @@ describe Castronaut::Presenters::ServiceValidate do
 
         end
 
+        describe "when proxy granting ticket generation fails" do
+
+          it "sets HTTP status to 401 if proxy ticket generation fails" do
+            @controller.params['pgtUrl'] = 'http://proxygrantingticketurl'
+            Castronaut::Models::ServiceTicket.stub!(:validate_ticket).and_return(stub('ticket_stub', 'valid?' => false))
+            Castronaut::Presenters::ServiceValidate.new(@controller).represent!.current_status.should == 401
+          end
+        end
+
       end
 
     end

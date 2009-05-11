@@ -64,15 +64,22 @@ describe 'Castronaut Application Controller' do
 
   describe "requesting /serviceValidate via GET" do
 
-    it 'responds with status 200' do
+    it 'responds with status 200 if ticket is okay' do
+      Castronaut::Models::ServiceTicket.stub!(:validate_ticket).and_return(stub('ticket_stub', :valid? => true, :ticket => 'mytick', :username => 'billybob'))
       get '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
 
       @response.should be_ok
     end
 
+    it 'responds with status 401 if ticket is invalid' do
+      Castronaut::Models::ServiceTicket.stub!(:validate_ticket).and_return(stub('ticket_stub', :valid? => false, :ticket => 'mytick', :message_category => 'invalid', :message => 'ticket invalid'))
+      get '/serviceValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }
+
+      @response.status.should == 401
+    end
   end
   
-  describe "requesting /proxyValidate via GET" do
+  describe "requesting /proxyvalidate via get" do
 
     it 'responds with status 200' do
       get '/proxyValidate', :env => { 'REMOTE_ADDR' => '10.0.0.1' }

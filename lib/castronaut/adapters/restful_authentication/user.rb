@@ -5,7 +5,11 @@ module Castronaut
     module RestfulAuthentication
       
       class User < ActiveRecord::Base
-      
+        
+        set_table_name do
+          Castronaut.config.cas_adapter["database"]["user_table"] || "users"
+        end
+        
         def self.digest(password, salt)
           site_key = Castronaut.config.cas_adapter['site_key']
           digest_value = site_key

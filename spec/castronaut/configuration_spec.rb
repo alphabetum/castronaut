@@ -65,7 +65,7 @@ describe Castronaut::Configuration do
       config = Castronaut::Configuration.new
       config.stub!(:parse_config_into_settings)
       config.stub!(:connect_activerecord)
-      config.stub!(:setup_logger).and_return(stub_everything)
+      config.stub!(:setup_logger).and_return(stub({}).as_null_object)
       Castronaut::Configuration.stub!(:new).and_return(config)
 
       Castronaut::Configuration.load.config_file_path.should == './castronaut.yml'
@@ -77,7 +77,7 @@ describe Castronaut::Configuration do
       config = Castronaut::Configuration.new
       config.stub!(:parse_config_into_settings)
       config.stub!(:connect_activerecord)
-      config.stub!(:setup_logger).and_return(stub_everything)
+      config.stub!(:setup_logger).and_return(stub({}).as_null_object)
       Castronaut::Configuration.stub!(:new).and_return(config)
 
       Castronaut::Configuration.load("/foo/bar/baz").config_file_path.should == '/foo/bar/baz'
@@ -89,7 +89,7 @@ describe Castronaut::Configuration do
       config = Castronaut::Configuration.new
       config.stub!(:parse_config_into_settings)
       config.stub!(:connect_activerecord)
-      config.stub!(:setup_logger).and_return(stub_everything)
+      config.stub!(:setup_logger).and_return(stub({}).as_null_object)
       Castronaut::Configuration.stub!(:new).and_return(config)
 
       Castronaut::Configuration.load(@test_config_file)
@@ -102,7 +102,7 @@ describe Castronaut::Configuration do
       config = Castronaut::Configuration.new
       config.stub!(:parse_config_into_settings)
       config.stub!(:connect_activerecord)
-      config.stub!(:setup_logger).and_return(stub_everything)
+      config.stub!(:setup_logger).and_return(stub({}).as_null_object)
       Castronaut::Configuration.stub!(:new).and_return(config)
 
       Castronaut::Configuration.load(@test_config_file).config_hash = config_hash
@@ -122,7 +122,7 @@ describe Castronaut::Configuration do
       config = Castronaut::Configuration.new
       config.stub!(:connect_activerecord)
       Castronaut::Configuration.stub!(:new).and_return(config)
-      Hodel3000CompliantLogger.should_receive(:new).with("log/castronaut.log", anything).and_return(stub_everything)
+      Hodel3000CompliantLogger.should_receive(:new).with("log/castronaut.log", anything).and_return(stub({}).as_null_object)
 
       Castronaut::Configuration.load(@test_config_file)
     end
@@ -140,7 +140,7 @@ describe Castronaut::Configuration do
       config.stub!(:connect_activerecord)
       Castronaut::Configuration.stub!(:new).and_return(config)
 
-      Hodel3000CompliantLogger.should_receive(:new).with("log/castronaut.log", "daily").and_return(stub_everything)
+      Hodel3000CompliantLogger.should_receive(:new).with("log/castronaut.log", "daily").and_return(stub({}).as_null_object)
 
       Castronaut::Configuration.load(@test_config_file)
     end

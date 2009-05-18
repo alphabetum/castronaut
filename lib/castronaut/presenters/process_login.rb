@@ -120,7 +120,7 @@ module Castronaut
           fire_authentication_success_notice('username' => username, 'client_host' => client_host, 'service' => service)
 
           ticket_granting_ticket = Castronaut::Models::TicketGrantingTicket.generate_for(username, client_host)
-          controller.set_cookie "tgt", ticket_granting_ticket.to_cookie
+          controller.response.set_cookie "tgt", ticket_granting_ticket.to_cookie
           if service.blank?
             messages << "You have successfully logged in."
           else

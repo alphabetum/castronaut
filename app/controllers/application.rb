@@ -4,6 +4,7 @@ end
 
 get '/login' do
   no_cache
+  Castronaut.logger.info("login params (get): #{self.params}")
   @presenter = Castronaut::Presenters::Login.new(self)
   @presenter.represent!
   @presenter.your_mission.call
@@ -11,6 +12,7 @@ end
 
 post '/login' do
   @presenter = Castronaut::Presenters::ProcessLogin.new(self)
+  Castronaut.logger.info("login params: #{self.params}")
   @presenter.represent!
   status @presenter.current_status
   @presenter.your_mission.call

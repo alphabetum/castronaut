@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 describe Castronaut::Presenters::Logout do
   
   before do
-    @controller = stub('controller', :params => {}, :erb => nil, :request => stub('request', :cookies => {}, :env => { 'REMOTE_ADDR' => '10.1.1.1'}))
+    @controller = stub('controller', :params => {}, :erb => nil, :request => stub('request', :cookies => {}, :env => { 'REMOTE_ADDR' => '10.1.1.1'}), :response => stub({}))
   end
 
   describe "initialization" do
@@ -24,13 +24,13 @@ describe Castronaut::Presenters::Logout do
   end
 
   it "generates a new login ticket when you call :login_ticket" do
-    Castronaut::Models::LoginTicket.should_receive(:generate_from).and_return(stub_everything(:ticket => 'ticket'))
+    Castronaut::Models::LoginTicket.should_receive(:generate_from).and_return(stub(:ticket => 'ticket').as_null_object)
     Castronaut::Presenters::Logout.new(@controller).login_ticket
   end
 
   describe "representing" do
     
-    before { @controller.stub!(:delete_cookie) }
+    before { @controller.response.stub!(:delete_cookie) }
 
     it "attempts to find the ticket granting ticket using the ticket granting ticket cookie" do
       Castronaut::Models::TicketGrantingTicket.should_receive(:find_by_ticket).and_return(nil)
@@ -76,7 +76,7 @@ describe Castronaut::Presenters::Logout do
     end
 
     it "deletes the tgt cookie from the controller" do
-      @controller.should_receive(:delete_cookie).with('tgt')
+      @controller.response.should_receive(:delete_cookie).with('tgt')
       Castronaut::Presenters::Logout.new(@controller).represent!
     end
     
